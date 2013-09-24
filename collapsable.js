@@ -34,6 +34,10 @@
          this.contenido = this.div.find(".contenido");
          this.titulo = this.div.find(".titulo");
 
+	 this.setTitulo = function( titulo ) {
+	     this.titulo.html( titulo );
+	 }
+
          this.width = "300px";
 
          this.load = function(html) {
