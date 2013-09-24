@@ -32,7 +32,7 @@
 
     
     this.contenido = this.div.find(".contenido");
-    this.titulo = this.div.find(".titulo");
+    this.titulo = this.div.find(".txt_vertical");
 
     this.setTitulo = function( titulo ) {
 	this.titulo.html( titulo );
