@@ -33,7 +33,8 @@ Cortina = function( parent ){
         return this.div.html();
     }
 
-    
+    this.hideNext = false;
+
     this.contenido = this.div.find(".contenido");
     this.titulo = this.div.find(".titulo");
 
@@ -50,8 +51,9 @@ Cortina = function( parent ){
         }
     }
 
-
     this.collapse = function(){
+	// var child = this.contenido.find('.pad_div');
+	// child.animate({width: this.contenido.width() },1000);
         this.contenido.animate(
             { width: 0 },
             1000,
@@ -65,25 +67,40 @@ Cortina = function( parent ){
     this.expand = function(){
 	var collapsables = this.parent.cortinas;
 	var index = $.inArray( this, collapsables );
-	console.log('ind ' + index);
 	var totalW = 0;
 
 	var lastTtlW = 0;
-
+	
 	for( i in collapsables ) {
-	    if( i < index ) {
-		lastTtlW = collapsables[i].titulo.width(); 
-		totalW += lastTtlW;
-		totalW += collapsables[i].div.width();
+	    if( i != index ) {
+		collapsables[i].collapse();
 	    }
 	}
 
-	totalW -= index * lastTtlW;
+	if( this.hideNext ) {
+	    
+	    for( i in collapsables ) {
+		if( i < index ) {
+		    lastTtlW = collapsables[i].titulo.width(); 
+		    totalW += lastTtlW;
+		    totalW += collapsables[i].div.width();
+		}
+	    }
+	    totalW -= index * lastTtlW;
+
+	} else {
+	    for( i in collapsables ) {
+		totalW += collapsables[i].titulo.width(); 
+	    }
+	}
+
 	console.log( 'tW ' + totalW );
-        this.contenido.animate(
-            { width: this.parent.parent.parent().width() - totalW },
-            1000,
+	var newW = this.parent.parent.parent().width() - totalW;
+	this.contenido.animate(
+            { width: newW },
+            1000, "",
             function(){
+	
                 this.collapsed = false;
             }
         );
@@ -110,14 +127,31 @@ Cortina = function( parent ){
 var Cortinas = function( parent ) {
     this.cortinas = [];
     this.parent = parent; 
+    this.hideNext = false;
 
     this.añadir = function( titulo, html )
     {             
 	var cortina = new Cortina( this );
+	cortina.hideNext = this.hideNext;
 	cortina.setTitulo( titulo );
         cortina.load(html);
         this.cortinas.push( cortina );             
         this.parent.append( cortina.div );
+
+	var tituloW = 0;
+	for(i in this.cortinas){ 
+	    tituloW += this.cortinas[i].titulo.width();
+	    console.log(tituloW);
+	}
+
+	for(i in this.cortinas){
+	    if( this.hideNext ) {}
+	    else {
+		this.cortinas[i].contenido.find('.pad_div').width(
+		    ( this.parent.parent().width() - tituloW ) * 0.9
+		)
+	    }
+	}
         
     }
 
