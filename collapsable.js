@@ -21,9 +21,16 @@ Cortina = function( parent ){
 
         html = $('<div>').attr('class','slider');
 
+	var xpndcllps = $('<div>').attr('class','xpndcllps').html( '+' );
+
+	var ttl = $('<div>').attr('class','txt_vertical').html( nombre );
+
         var titulo = $('<div>').attr('class','titulo').html(
-            $('<div>').attr('class','txt_vertical').html( nombre )
+	    ttl
         );
+
+	titulo.append(xpndcllps);
+
         var contenido = $('<div>').attr('class','contenido').html($('<div>').attr('class','pad_div')); 
         
         html.append( contenido );
@@ -67,42 +74,19 @@ Cortina = function( parent ){
 	var collapsables = this.parent.cortinas;
 	var index = $.inArray( this, collapsables );
 	var allcollapsed = true;
-	// for( i in collapsables ) {
-	//     console.log("col:"+i+":"+collapsables[i].collapsed);
 
-	//     if( ! collapsables[i].collapsed && i != index ) {
-	// 	allcollapsed = false;
-	// 	break;
-	//     }
-	// }
-
-//	if( ! allcollapsed ) {
-
-	// var child = this.contenido.find('.pad_div');
-	// child.animate({width: this.contenido.width() },1000);
-            this.contenido.animate(
-		{ width: 0 },
-		1000,
-		function(){
-                    this.collapsed = true;
-
-
-		    /*
-		      for( i in collapsables ) {
-		      if( collapsables[i].collapsed ) {
-		      all_collapsed = false;
-		      break;
-		      }
-		      }
-		      if ( all_collapsed ) {
-		      collapsables[ collapsables.length - 1 ].expand();
-		      }
-		    */		
-		}
-            );
-	    this.titulo.animate({left:0},1000);
-
-//	}
+	this.titulo.find('.xpndcllps').fadeIn();
+	
+	this.contenido.animate(
+	    { width: 0 },
+	    1000,
+	    function(){
+                this.collapsed = true;
+	    }
+        );
+	this.titulo.animate({width:'50px'},100);
+	this.titulo.animate({left:0},1000);
+	
 	
     }
 
@@ -111,6 +95,8 @@ Cortina = function( parent ){
 	var collapsables = this.parent.cortinas;
 	var index = $.inArray( this, collapsables );
 	var totalW = 0;
+
+	this.titulo.find('.xpndcllps').fadeOut();
 
 	var lastTtlW = 0;
 
@@ -127,28 +113,26 @@ Cortina = function( parent ){
 		if( i < index ) {
 		    lastTtlW = collapsables[i].titulo.width(); 
 		    totalW += lastTtlW;
-		    totalW += collapsables[i].div.width();
+		    totalW += collapsables[i].contenido.width();
 		}
 	    }
 	    totalW -= index * lastTtlW;
 
 	} else {
 	    for( i in collapsables ) {
-
-		if(i<collapsables.length-1) {
-		    totalW += collapsables[i].titulo.width(); 
-		}
-
-	    }
-	    if(index < collapsables.length-1) {
-		totalW += collapsables[index].titulo.width(); 		
+		if( index != i ) {
+		    totalW += collapsables[index].titulo.width(); 		
+		} 
 	    }
 	}
 
 	var newW = this.parent.parent.parent().width() - totalW;
 	var collapsable = this;
+	this.contenido.find('.pad_div').animate(
+            { width: newW  });
+
 	this.contenido.animate(
-            { width: newW },
+            { width: newW  },
             1000, "",
             function(){
 
@@ -159,6 +143,8 @@ Cortina = function( parent ){
                 this.collapsed = false;
             }
         );
+	this.titulo.animate({width:0},1000);
+
 	this.titulo.animate({left:this.contenido.width()},1000);
 
 
