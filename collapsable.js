@@ -1,3 +1,13 @@
+
+/*
+
+1-FALTA MOSTRAR BARRA TÍTULO DE ÚLTIMO DIV CUANDO ÉSTE ESTÁ COLAPSADO
+2-ELIMINAR SLIDERS SIGUIENTES CUANDO SE CARGA NUEVO CONTENIDO
+3-ASIGNAR FUNCION A NUEVAS CORTINAS PARA QUE SUS LINKS SE ABRAN EN UN SLIDER NUEVO
+4-REVISAR ESTRUCTURA PRA MODULARIZAR MEJOR ESTE TIPO DE FUNCIONES
+
+*/
+
 Cortina = function( parent ){
 
 
@@ -51,19 +61,32 @@ Cortina = function( parent ){
         }
     }
 
+    this.collapsed = false;
+
     this.collapse = function(){
-	// var child = this.contenido.find('.pad_div');
-	// child.animate({width: this.contenido.width() },1000);
 	var collapsables = this.parent.cortinas;
 	var index = $.inArray( this, collapsables );
-	if( index != collapsables.length - 1 ) {
-	    var all_collapsed = true;
-	    
+	var allcollapsed = true;
+	// for( i in collapsables ) {
+	//     console.log("col:"+i+":"+collapsables[i].collapsed);
+
+	//     if( ! collapsables[i].collapsed && i != index ) {
+	// 	allcollapsed = false;
+	// 	break;
+	//     }
+	// }
+
+//	if( ! allcollapsed ) {
+
+	// var child = this.contenido.find('.pad_div');
+	// child.animate({width: this.contenido.width() },1000);
             this.contenido.animate(
 		{ width: 0 },
 		1000,
 		function(){
                     this.collapsed = true;
+
+
 		    /*
 		      for( i in collapsables ) {
 		      if( collapsables[i].collapsed ) {
@@ -78,21 +101,25 @@ Cortina = function( parent ){
 		}
             );
 	    this.titulo.animate({left:0},1000);
-	}
+
+//	}
+	
     }
 
     this.expand = function(){
+
 	var collapsables = this.parent.cortinas;
 	var index = $.inArray( this, collapsables );
 	var totalW = 0;
 
 	var lastTtlW = 0;
 
-	for( i in collapsables ) {
-	    if( i != index ) {
-		collapsables[i].collapse();
-	    }
+	if( index != collapsables.length - 1 ) {
+	    var all_collapsed = true;
+	    
+
 	}
+
 
 	if( this.hideNext ) {
 	    
@@ -107,9 +134,14 @@ Cortina = function( parent ){
 
 	} else {
 	    for( i in collapsables ) {
+
 		if(i<collapsables.length-1) {
 		    totalW += collapsables[i].titulo.width(); 
 		}
+
+	    }
+	    if(index < collapsables.length-1) {
+		totalW += collapsables[index].titulo.width(); 		
 	    }
 	}
 
@@ -119,14 +151,23 @@ Cortina = function( parent ){
             { width: newW },
             1000, "",
             function(){
-		if(index==collapsables.length-1){
-		    //collapsable.ocultar_titulo();
-		}
 
+
+		//if(index==collapsables.length-1){
+		    //collapsable.ocultar_titulo();
+		//}
                 this.collapsed = false;
             }
         );
 	this.titulo.animate({left:this.contenido.width()},1000);
+
+
+	for( i in collapsables ) {
+	    if( i != index ) {
+		
+		collapsables[i].collapse();
+	    }
+	}
 
     }
 
@@ -136,11 +177,11 @@ Cortina = function( parent ){
 
         if( cortina.collapsed ) {
 	    cortina.collapse();
-	    cortina.collapsed = false;
+//	    cortina.collapsed = false;
         }
         else {
 	    cortina.expand();
-	    cortina.collapsed = true;
+//	    cortina.collapsed = true;
         }
 
     });
@@ -172,9 +213,9 @@ var Cortinas = function( parent ) {
         this.parent.append( cortina.div );
 	var tituloW = 0;
 	for(i in this.cortinas){ 
-	    if( i < this.cortinas.length - 1 ) {
-		tituloW += this.cortinas[i].titulo.width();
-	    }
+//	    if( i < this.cortinas.length - 1 ) {
+	       tituloW += this.cortinas[i].titulo.width();
+//	   }
 	}
 	var newW = ( this.parent.parent().width() - tituloW );
 
@@ -185,7 +226,9 @@ var Cortinas = function( parent ) {
 		this.cortinas[i].contenido.find('.pad_div').width(newW - 20);
 	    }
 	}
+	this.collapse();
         
+	this.posicionarTitulos();
     }
 
     this.quitar = function() {
@@ -196,8 +239,19 @@ var Cortinas = function( parent ) {
 
     this.collapse = function() {
         for(i in this.cortinas) {
-            this.cortinas[i].collapse();
+	    if( i < this.cortinas.length - 1 ){
+		this.cortinas[i].collapse();
+	    }
         }
     }
+
+    this.posicionarTitulos = function(){
+         $('.slider .txt_vertical').each(function(){
+             $(this).width( $(this).parent().height() );
+             $(this).offset({ left : $(this).parent().offset().left });
+             $(this).offset({ top : $(this).parent().offset().top });
+         });
+
+     };
 
 }
