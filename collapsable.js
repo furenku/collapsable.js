@@ -1,12 +1,12 @@
 
 /*
 
-1-FALTA MOSTRAR BARRA TÍTULO DE ÚLTIMO DIV CUANDO ÉSTE ESTÁ COLAPSADO
-2-ELIMINAR SLIDERS SIGUIENTES CUANDO SE CARGA NUEVO CONTENIDO
-3-ASIGNAR FUNCION A NUEVAS CORTINAS PARA QUE SUS LINKS SE ABRAN EN UN SLIDER NUEVO
-4-REVISAR ESTRUCTURA PRA MODULARIZAR MEJOR ESTE TIPO DE FUNCIONES
+1-ELIMINAR SLIDERS SIGUIENTES CUANDO SE CARGA NUEVO CONTENIDO2
+-2ASIGNAR FUNCION A NUEVAS CORTINAS PARA QUE SUS LINKS SE ABRAN EN UN SLIDER NUEVO
+3-REVISAR ESTRUCTURA PRA MODULARIZAR MEJOR ESTE TIPO DE FUNCIONES
 
 */
+
 
 Cortina = function( parent ){
 
@@ -75,7 +75,7 @@ Cortina = function( parent ){
 	var index = $.inArray( this, collapsables );
 	var allcollapsed = true;
 
-	this.titulo.find('.xpndcllps').fadeIn();
+	this.titulo.find('.xpndcllps').show();
 	
 	this.contenido.animate(
 	    { width: 0 },
@@ -96,27 +96,26 @@ Cortina = function( parent ){
 	var index = $.inArray( this, collapsables );
 	var totalW = 0;
 
-	this.titulo.find('.xpndcllps').fadeOut();
+	this.titulo.find('.xpndcllps').hide();
 
-	var lastTtlW = 0;
+	 var lastTtlW = 0;
 
-	if( index != collapsables.length - 1 ) {
-	    var all_collapsed = true;
-	    
-
-	}
+	 if( index != collapsables.length - 1 ) {
+	     var all_collapsed = true;
 
 
-	if( this.hideNext ) {
-	    
-	    for( i in collapsables ) {
-		if( i < index ) {
-		    lastTtlW = collapsables[i].titulo.width(); 
-		    totalW += lastTtlW;
-		    totalW += collapsables[i].contenido.width();
-		}
-	    }
-	    totalW -= index * lastTtlW;
+	 }
+
+
+	 if( this.hideNext ) {
+
+	     for( i in collapsables ) {
+		 if( i < index ) {
+		     lastTtlW = collapsables[i].titulo.width(); 
+		     totalW += lastTtlW;
+		     totalW += collapsables[i].contenido.width();
+		 }
+	     }
 
 	} else {
 	    for( i in collapsables ) {
@@ -124,12 +123,24 @@ Cortina = function( parent ){
 		    totalW += collapsables[index].titulo.width(); 		
 		} 
 	    }
+	    if(collapsables.length==1) {
+		totalW -= index * lastTtlW;
+	    }
+
 	}
 
 	var newW = this.parent.parent.parent().width() - totalW;
 	var collapsable = this;
 	this.contenido.find('.pad_div').animate(
-            { width: newW  });
+            { width: newW - 30 });
+
+
+	for( i in collapsables ) {
+	    if( i != index ) {
+		
+		collapsables[i].collapse();
+	    }
+	}
 
 	this.contenido.animate(
             { width: newW  },
@@ -147,13 +158,6 @@ Cortina = function( parent ){
 
 	this.titulo.animate({left:this.contenido.width()},1000);
 
-
-	for( i in collapsables ) {
-	    if( i != index ) {
-		
-		collapsables[i].collapse();
-	    }
-	}
 
     }
 
@@ -190,7 +194,16 @@ var Cortinas = function( parent ) {
     this.hideNext = false;
 
     this.añadir = function( titulo, html )
-    {             
+    {          
+	if(this.cortinas.length>0) {
+	    for(i in this.cortinas) {
+		var index = this.cortinas.length - i;
+		this.cortinas[i].div.css('zIndex', index);   
+	    }
+	    
+	}
+
+	
 	var cortina = new Cortina( this );
 	cortina.hideNext = this.hideNext;
 	cortina.setTitulo( titulo );
@@ -209,7 +222,7 @@ var Cortinas = function( parent ) {
 	    if( this.hideNext ) {}
 	    else {	
 		this.cortinas[i].contenido.width(newW);
-		this.cortinas[i].contenido.find('.pad_div').width(newW - 20);
+		this.cortinas[i].contenido.find('.pad_div').width( newW - 50 );
 	    }
 	}
 	this.collapse();
