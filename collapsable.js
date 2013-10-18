@@ -41,6 +41,14 @@ Cortina = function( parent ){
     }
 
 
+    this.destroy = function() {
+
+	this.titulo.remove();
+	this.contenido.remove();
+	this.div.remove();
+
+    }
+
     this.div = this.create();
 
 
@@ -71,23 +79,32 @@ Cortina = function( parent ){
     this.collapsed = false;
 
     this.collapse = function(){
+
 	var collapsables = this.parent.cortinas;
 	var index = $.inArray( this, collapsables );
 	var allcollapsed = true;
 
 	this.titulo.find('.xpndcllps').show();
 	
-	this.contenido.animate(
-	    { width: 0 },
-	    1000,
-	    function(){
-                this.collapsed = true;
-	    }
-        );
-	this.titulo.animate({width:'50px'},100);
-	this.titulo.animate({left:0},1000);
+	var w = this.contenido.width();
+
+	var contenido = this.contenido; 
+	if( w > 0 ) {
+
 	
-	
+	    this.contenido.animate(
+		{ width: 0 },
+		1000,
+		function(){
+                    this.collapsed = true;
+alert(contenido.width());
+		}
+            );
+	    this.titulo.animate({width:'50px'},100);
+	    this.titulo.animate({left:0},1000);
+	    
+	}
+    
     }
 
     this.expand = function(){
@@ -167,11 +184,9 @@ Cortina = function( parent ){
 
         if( cortina.collapsed ) {
 	    cortina.collapse();
-//	    cortina.collapsed = false;
         }
         else {
 	    cortina.expand();
-//	    cortina.collapsed = true;
         }
 
     });
@@ -184,7 +199,34 @@ Cortina = function( parent ){
 	this.titulo.show();
     }
 
+    this.setupLinks = function() {
+	var comp = new RegExp(location.host);
 
+	var parent = this.parent;
+
+	var this_cortina = this;
+
+	this.contenido.find('a').each(function(){
+
+	    var link = $(this);
+	    var url = link.attr('href');
+	    link.click(function(e){
+		e.preventDefault();
+		e.stopPropagation();
+
+		if(comp.test(url)){
+		    $.get( url, function( data ) {
+			parent.clearNext(this_cortina);
+			parent.añadir(link.text(), data );
+			
+		    });
+		}
+		else{
+		    alert("external");
+		}
+	    });
+	});
+    }
 
 }
 
@@ -225,6 +267,9 @@ var Cortinas = function( parent ) {
 		this.cortinas[i].contenido.find('.pad_div').width( newW - 50 );
 	    }
 	}
+
+	cortina.setupLinks();
+
 	this.collapse();
         
 	this.posicionarTitulos();
@@ -252,5 +297,21 @@ var Cortinas = function( parent ) {
          });
 
      };
+
+
+    this.clearNext = function( child ) {
+	var index = $.inArray( child, this.cortinas );
+
+	if( index + 1 < this.cortinas.length ) {
+
+	    var toDelete = this.cortinas.splice( index + 1 , this.cortinas.length );
+
+	    for(i in toDelete) {
+		toDelete[i].destroy();
+	    }
+
+	}
+
+    }
 
 }
