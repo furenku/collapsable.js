@@ -19,7 +19,7 @@ Cortina = function( parent ){
         
         var nombre = "nombre";
 
-        html = $('<div>').attr('class','slider');
+        html = $('<div>').attr('class','collapsable');
 
 	var xpndcllps = $('<div>').attr('class','xpndcllps').html( '+' );
 
@@ -97,7 +97,7 @@ Cortina = function( parent ){
 		1000,
 		function(){
                     this.collapsed = true;
-alert(contenido.width());
+		    
 		}
             );
 	    this.titulo.animate({width:'50px'},100);
@@ -222,7 +222,7 @@ alert(contenido.width());
 		    });
 		}
 		else{
-		    alert("external");
+//		    alert("external");
 		}
 	    });
 	});
@@ -290,7 +290,7 @@ var Cortinas = function( parent ) {
     }
 
     this.posicionarTitulos = function(){
-         $('.slider .txt_vertical').each(function(){
+         $('.collapsable .txt_vertical').each(function(){
              $(this).width( $(this).parent().height() );
              $(this).offset({ left : $(this).parent().offset().left });
              $(this).offset({ top : $(this).parent().offset().top });
