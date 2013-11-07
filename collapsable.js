@@ -12,6 +12,7 @@ Cortina = function( parent ){
 
 
     this.parent = parent;
+    var parent = this.parent;
 
     this.create = function(){
 	
@@ -144,6 +145,9 @@ Cortina = function( parent ){
 		totalW -= index * lastTtlW;
 	    }
 
+	   
+	    
+
 	}
 
 	var newW = this.parent.parent.parent().width() - totalW;
@@ -159,10 +163,12 @@ Cortina = function( parent ){
 	}
 
 	this.contenido.animate(
-            { width: newW  },
+            { width: newW - 30  },
             1000, "",
             function(){
 
+		parent.active = index;
+		parent.expandCallback();
 
 		//if(index==collapsables.length-1){
 		    //collapsable.ocultar_titulo();
@@ -188,8 +194,8 @@ Cortina = function( parent ){
 	    cortina.expand();
         }
 
-    });
-
+    })
+;
     this.ocultar_titulo = function() {
 	this.titulo.hide();
     }
@@ -216,7 +222,13 @@ Cortina = function( parent ){
 		if(comp.test(url)){
 		    $.get( url, function( data ) {
 			parent.clearNext(this_cortina);
-			parent.añadir(link.text(), data );
+			var title = link.find('.title');
+			if( title.length == 0 ) {
+			    title = link.text();
+			} else {
+			    title = title.text();
+			}
+			parent.añadir(title, data );
 			
 		    });
 		}
@@ -233,6 +245,12 @@ var Cortinas = function( parent ) {
     this.cortinas = [];
     this.parent = parent; 
     this.hideNext = false;
+
+    this.active = null;
+
+    this.expandCallback = function() {
+	console.log( "expand callback" );
+    }
 
     this.añadir = function( titulo, html )
     {          
@@ -261,17 +279,19 @@ var Cortinas = function( parent ) {
 	}
 	var newW = ( this.parent.parent().width() - tituloW );
 
-	for(i in this.cortinas){
-	    if( this.hideNext ) {}
-	    else {	
+	// for(i in this.cortinas){
+	//     if( this.hideNext ) {}
+	//     else {
+		
 		// if( this.cortinas[i].contenido.width() > 0 ) {
 		//     this.cortinas[i].contenido.width( newW );
 		//     this.cortinas[i].contenido.find( '.pad_div' ).width( newW - 50 );
 		// }
-		cortina.contenido.width( newW );
-		cortina.contenido.find( '.pad_div' ).width( newW - 50 );
-	    }
-	}
+	cortina.contenido.width( newW );
+	cortina.contenido.find( '.pad_div' ).width( newW - 50 );
+	
+	//     }
+	// }
 
 	cortina.setupLinks();
 
@@ -279,6 +299,9 @@ var Cortinas = function( parent ) {
         
 	this.posicionarTitulos();
 
+	this.active = this.cortinas.length - 1;
+	this.expandCallback();
+	
     }
 
     this.quitar = function() {

@@ -45,10 +45,10 @@
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    background-color: #444;
+
 }
 
-.collapsable .titulo {
+.collapsable > .titulo {
 
     color: #fff;
     font-weight: bold;
