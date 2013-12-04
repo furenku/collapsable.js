@@ -289,7 +289,10 @@ var Cortinas = function( parent ) {
 		// }
 	cortina.contenido.width( newW );
 	cortina.contenido.find( '.pad_div' ).width( newW - 50 );
-	
+	var parentW = this.parent.width();
+
+	this.parent.width( parentW + newW );
+
 	//     }
 	// }
 
