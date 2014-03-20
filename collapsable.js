@@ -17,7 +17,8 @@ Cortina = function( parent ){
     this.create = function(){
 	
         var html;
-        
+        var seguir_links = false;
+	
         var nombre = "nombre";
 
         html = $('<div>').attr('class','collapsable');
@@ -101,7 +102,7 @@ Cortina = function( parent ){
 		    
 		}
             );
-	    this.titulo.animate({width:'50px'},100);
+	    this.titulo.animate({width:'80px'},100);
 	    this.titulo.animate({left:0},1000);
 	    
 	}
@@ -215,27 +216,36 @@ Cortina = function( parent ){
 
 	    var link = $(this);
 	    var url = link.attr('href');
-	    link.click(function(e){
-		e.preventDefault();
-		e.stopPropagation();
+            if( ! (/\.(gif|jpg|jpeg|tiff|png)$/i).test(url) ) {
+		link.click(function(e){
+		    e.preventDefault();
+		    e.stopPropagation();
 
-		if(comp.test(url)){
-		    $.get( url, function( data ) {
-			parent.clearNext(this_cortina);
-			var title = link.find('.title');
-			if( title.length == 0 ) {
-			    title = link.text();
-			} else {
-			    title = title.text();
+		    if(comp.test(url)){
+			if( this.seguir_links ) {
+			    $.get( url, function( data ) {
+				parent.clearNext(this_cortina);
+				var title = link.find('.title');
+				if( title.length == 0 ) {
+				    title = link.text();
+				} else {
+				    title = title.text();
+				}
+				parent.añadir(title, data );
+				
+			    });
 			}
-			parent.añadir(title, data );
-			
-		    });
-		}
-		else{
-//		    alert("external");
-		}
-	    });
+			else{
+			    return false;
+			}
+
+		    }
+		    else{
+			//		    alert("external");
+		    }
+		});
+	    }
+		
 	});
     }
 
