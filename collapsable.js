@@ -104,7 +104,7 @@ Cortina = function( parent ){
 		    
 		}
             );
-	    this.titulo.animate({width: anchoTituloStr },100);
+            this.titulo.animate({width: this.parent.titleWidth },100);
 	    this.titulo.animate({left:0},1000);
 	    
 	}
@@ -294,7 +294,7 @@ var Cortinas = function( parent ) {
 //	   }
 	}*/
 
-	tituloW = anchoTitulo;
+        tituloW = this.titleWidth;
 	
 	var newW = ( this.parent.parent().width() - tituloW );
 
@@ -331,6 +331,39 @@ var Cortinas = function( parent ) {
         c.div.remove();
         
     }
+
+    
+    this.resize = function() {
+
+	// container holder div: ch
+	var ch = this.parent.parent();
+
+        var chW = ch.width();
+        var chH = ch.height();
+
+	this.parent.height( chH );
+
+        tituloW = this.titleWidth;
+        
+        var newW = chW - ( ( this.cortinas.length -1 ) * tituloW );
+        
+        var parentW = this.parent.width();
+
+        this.parent.width( parentW + newW );
+
+        this.cortinas[ this.active ].contenido.animate(
+            { width: newW }, 0);
+
+        this.cortinas[ this.active ].contenido.find('.pad_div').animate(
+            { width: newW }, 0);
+        for(i in this.cortinas) {
+            if( i != this.active && i < this.cortinas.length - 1 ){
+                this.cortinas[i].titulo.width( tituloW );
+            }
+        }
+        
+    }
+
 
     this.collapse = function() {
         for(i in this.cortinas) {
