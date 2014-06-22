@@ -7,6 +7,8 @@
 
 */
 
+var anchoTitulo = 80;
+var anchoTituloStr = anchoTitulo+'px';
 
 Cortina = function( parent ){
 
@@ -102,7 +104,7 @@ Cortina = function( parent ){
 		    
 		}
             );
-	    this.titulo.animate({width:'80px'},100);
+	    this.titulo.animate({width: anchoTituloStr },100);
 	    this.titulo.animate({left:0},1000);
 	    
 	}
@@ -154,7 +156,7 @@ Cortina = function( parent ){
 	var newW = this.parent.parent.parent().width() - totalW;
 	var collapsable = this;
 	this.contenido.find('.pad_div').animate(
-            { width: newW - 30 });
+            { width: newW });
 
 
 	for( i in collapsables ) {
@@ -164,7 +166,7 @@ Cortina = function( parent ){
 	}
 
 	this.contenido.animate(
-            { width: newW - 30  },
+            { width: newW  },
             1000, "",
             function(){
 
@@ -262,6 +264,8 @@ var Cortinas = function( parent ) {
 	console.log( "expand callback" );
     }
 
+    this.titleWidth= 80;
+
     this.añadir = function( titulo, html )
     {          
 	if(this.cortinas.length>0) {
@@ -281,12 +285,17 @@ var Cortinas = function( parent ) {
         this.cortinas.push( cortina );             
         this.parent.append( cortina.div );
 
-	var tituloW = 0;
+	/*
+	 var tituloW = 0;
 	for(i in this.cortinas){ 
 //	    if( i < this.cortinas.length - 1 ) {
-	       tituloW += this.cortinas[i].titulo.width();
+            console.log( "ttl!", i,  this.cortinas[i].titulo.width(), tituloW );
+	    tituloW += this.cortinas[i].titulo.width();
 //	   }
-	}
+	}*/
+
+	tituloW = anchoTitulo;
+	
 	var newW = ( this.parent.parent().width() - tituloW );
 
 	// for(i in this.cortinas){
@@ -298,7 +307,7 @@ var Cortinas = function( parent ) {
 		//     this.cortinas[i].contenido.find( '.pad_div' ).width( newW - 50 );
 		// }
 	cortina.contenido.width( newW );
-	cortina.contenido.find( '.pad_div' ).width( newW - 50 );
+	
 	var parentW = this.parent.width();
 
 	this.parent.width( parentW + newW );
@@ -310,7 +319,7 @@ var Cortinas = function( parent ) {
 
 	this.collapse();
         
-	this.posicionarTitulos();
+        this.posicionarTitulos();
 
 	this.active = this.cortinas.length - 1;
 	this.expandCallback();
@@ -340,6 +349,13 @@ var Cortinas = function( parent ) {
 
      };
 
+    this.calcularTamannos = function() {
+	var titulos = $('.collapsable .titulo');
+        console.log("T", titulos.length );
+	titulos.each(function(){
+	    console.log("W", $(this).width());
+	});	
+    };
 
     this.clearNext = function( child ) {
 	var index = $.inArray( child, this.cortinas );
